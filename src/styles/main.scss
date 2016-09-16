@@ -6,3 +6,9 @@ $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 body  {
   background: #fff;
 }
+
+.calendar-cell {
+  width: 100px;
+  border: 1px solid #ccc;
+  float: left;
+}

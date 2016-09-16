@@ -8,10 +8,15 @@ module Main exposing (..)
 -}
 
 import Html.App
-import Html exposing (Html)
+import Html exposing (Html, div, text)
+import Html.Events exposing (onClick)
+import Html.Attributes exposing (class)
 import Date exposing (..)
 import Date.Extra.Core exposing (..)
 import Date.Extra.Utils exposing (dayList)
+import Date.Extra.Config
+import Date.Extra.Config.Configs exposing (getConfig)
+import Date.Extra.Format exposing (format, isoDateFormat)
 import Debug
 
 
@@ -37,6 +42,16 @@ type alias Model =
     { selectedYear : Year
     , cells : List Cell
     }
+
+
+dateConfig : Date.Extra.Config.Config
+dateConfig =
+    getConfig "en_us"
+
+
+dateFormat : String
+dateFormat =
+    isoDateFormat
 
 
 init : ( Model, Cmd Msg )
@@ -92,8 +107,22 @@ view model =
         _ =
             Debug.log "model: " model
     in
-        Html.div []
-            []
+        div []
+            (calendarCells model.cells)
+
+
+calendarCells : List Cell -> List (Html Msg)
+calendarCells cells =
+    List.map calendarCell cells
+
+
+calendarCell : Cell -> Html Msg
+calendarCell cell =
+    div
+        [ class "calendar-cell"
+        , onClick NoOp
+        ]
+        [ text (format dateConfig dateFormat cell.date) ]
 
 
 
