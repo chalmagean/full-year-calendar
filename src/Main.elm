@@ -122,7 +122,12 @@ calendarCell cell =
         [ class "calendar-cell"
         , onClick NoOp
         ]
-        [ text (format dateConfig dateFormat cell.date) ]
+        [ text (cellFormat cell) ]
+
+
+cellFormat : Cell -> String
+cellFormat cell =
+    format dateConfig "%d" cell.date
 
 
 
