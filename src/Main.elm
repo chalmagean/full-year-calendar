@@ -13,6 +13,7 @@ import Html.Events exposing (onClick)
 import Html.Attributes exposing (class)
 import Date exposing (..)
 import Date.Extra.Core exposing (..)
+import Date.Extra.Create exposing (dateFromFields)
 import Date.Extra.Utils exposing (dayList)
 import Date.Extra.Config
 import Date.Extra.Config.Configs exposing (getConfig)
@@ -75,8 +76,7 @@ allDaysOfTheYear year =
 
 firstDayOfTheYear : Year -> Date
 firstDayOfTheYear year =
-    Date.fromString ("01/01/" ++ (toString year))
-        |> Result.withDefault (Date.fromTime 0)
+    dateFromFields year Jan 1 0 0 0 0
 
 
 {-|
