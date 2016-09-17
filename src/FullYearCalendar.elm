@@ -7,7 +7,6 @@ module FullYearCalendar exposing (..)
 
 -}
 
-import Html.App
 import Html exposing (Html, div, text)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (class)
@@ -55,14 +54,12 @@ dateFormat =
     isoDateFormat
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( { selectedYear = 2016
-      , selectedDate = Nothing
-      , cells = (initCells 2016)
-      }
-    , Cmd.none
-    )
+    { selectedYear = 2016
+    , selectedDate = Nothing
+    , cells = (initCells 2016)
+    }
 
 
 initCells : Year -> List Cell
@@ -91,11 +88,11 @@ buildEmptyCells date =
 -- UPDATE
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> Model
 update msg model =
     case msg of
         SelectDate date ->
-            ( { model | selectedDate = Just date }, Cmd.none )
+            { model | selectedDate = Just date }
 
 
 
@@ -125,17 +122,3 @@ calendarCell cell =
 cellFormat : Cell -> String
 cellFormat cell =
     format dateConfig "%-d" cell.date
-
-
-
--- MAIN
-
-
-main : Program Never
-main =
-    Html.App.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        }
