@@ -1,4 +1,4 @@
-module Main exposing (..)
+module FullYearCalendar exposing (..)
 
 {-| This library builds a full year calendar for the selected year
 
@@ -18,7 +18,6 @@ import Date.Extra.Utils exposing (dayList)
 import Date.Extra.Config
 import Date.Extra.Config.Configs exposing (getConfig)
 import Date.Extra.Format exposing (format, isoDateFormat)
-import Debug
 
 
 type Msg
@@ -105,12 +104,8 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    let
-        _ =
-            Debug.log "model: " model
-    in
-        div []
-            (calendarCells model.cells)
+    div []
+        (calendarCells model.cells)
 
 
 calendarCells : List Cell -> List (Html Msg)
