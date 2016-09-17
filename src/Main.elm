@@ -22,7 +22,7 @@ import Debug
 
 
 type Msg
-    = NoOp
+    = SelectDate Date
 
 
 type alias Year =
@@ -35,12 +35,13 @@ type alias Event =
 
 type alias Cell =
     { date : Date
-    , events : List Event
+    , events : Bool
     }
 
 
 type alias Model =
     { selectedYear : Year
+    , selectedDate : Maybe Date
     , cells : List Cell
     }
 
@@ -58,6 +59,7 @@ dateFormat =
 init : ( Model, Cmd Msg )
 init =
     ( { selectedYear = 2016
+      , selectedDate = Nothing
       , cells = (initCells 2016)
       }
     , Cmd.none
@@ -83,7 +85,7 @@ firstDayOfTheYear year =
 -}
 buildEmptyCells : Date -> Cell
 buildEmptyCells date =
-    { date = date, events = [ {} ] }
+    { date = date, events = False }
 
 
 
@@ -93,8 +95,8 @@ buildEmptyCells date =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        _ ->
-            ( model, Cmd.none )
+        SelectDate date ->
+            ( { model | selectedDate = Just date }, Cmd.none )
 
 
 
@@ -120,14 +122,14 @@ calendarCell : Cell -> Html Msg
 calendarCell cell =
     div
         [ class "calendar-cell"
-        , onClick NoOp
+        , onClick (SelectDate cell.date)
         ]
         [ text (cellFormat cell) ]
 
 
 cellFormat : Cell -> String
 cellFormat cell =
-    format dateConfig "%d" cell.date
+    format dateConfig "%-d" cell.date
 
 
 
