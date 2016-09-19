@@ -1,9 +1,8 @@
-module FullYearCalendar exposing (..)
+module FullYearCalendar exposing (view, update)
 
-{-| This library builds a full year calendar for the selected year
+{-|
 
-# Definition
-@docs monthDayCountInYear
+  This library builds a full year calendar for the specified year.
 
 -}
 
@@ -27,44 +26,22 @@ type alias Year =
     Int
 
 
-type alias Event =
-    {}
-
-
 type alias Cell =
     { date : Date
     , events : Bool
     }
 
 
-type alias Model =
-    { selectedYear : Year
-    , selectedDate : Maybe Date
-    , cells : List Cell
-    }
-
-
-dateConfig : Date.Extra.Config.Config
-dateConfig =
-    getConfig "en_us"
-
-
-dateFormat : String
-dateFormat =
-    isoDateFormat
-
-
-init : Model
-init =
-    { selectedYear = 2016
-    , selectedDate = Nothing
-    , cells = (initCells 2016)
-    }
-
-
 initCells : Year -> List Cell
 initCells year =
     List.map buildEmptyCells (allDaysOfTheYear year)
+
+
+{-|
+-}
+buildEmptyCells : Date -> Cell
+buildEmptyCells date =
+    { date = date, events = False }
 
 
 allDaysOfTheYear : Year -> List Date
@@ -77,32 +54,35 @@ firstDayOfTheYear year =
     dateFromFields year Jan 1 0 0 0 0
 
 
-{-|
--}
-buildEmptyCells : Date -> Cell
-buildEmptyCells date =
-    { date = date, events = False }
+dateConfig : Date.Extra.Config.Config
+dateConfig =
+    getConfig "en_us"
+
+
+dateFormat : String
+dateFormat =
+    isoDateFormat
 
 
 
 -- UPDATE
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : Msg -> Maybe Date
+update msg =
     case msg of
         SelectDate date ->
-            { model | selectedDate = Just date }
+            Just date
 
 
 
 --- VIEW
 
 
-view : Model -> Html Msg
-view model =
+view : Html Msg
+view =
     div []
-        (calendarCells model.cells)
+        (calendarCells (initCells 2016))
 
 
 calendarCells : List Cell -> List (Html Msg)
@@ -113,7 +93,7 @@ calendarCells cells =
 calendarCell : Cell -> Html Msg
 calendarCell cell =
     div
-        [ class "calendar-cell"
+        [ class "fyc-cell"
         , onClick (SelectDate cell.date)
         ]
         [ text (cellFormat cell) ]
