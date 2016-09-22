@@ -1,4 +1,4 @@
-module FullYearCalendar exposing (view, update)
+module FullYearCalendar exposing (view, update, Msg)
 
 {-|
 
@@ -8,7 +8,7 @@ module FullYearCalendar exposing (view, update)
 
 import Html exposing (Html, div, text)
 import Html.Events exposing (onClick)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, classList)
 import Date exposing (..)
 import Date.Extra.Core exposing (..)
 import Date.Extra.Create exposing (dateFromFields)
@@ -93,12 +93,28 @@ calendarCells cells =
 calendarCell : Cell -> Html Msg
 calendarCell cell =
     div
-        [ class "fyc-cell"
+        [ classList [ ( "fyc-cell", True ), ( "fyc-cell-first-day", (firstDayOfMonth cell.date) ) ]
         , onClick (SelectDate cell.date)
         ]
-        [ text (cellFormat cell) ]
+        [ text (cellText cell) ]
+
+
+cellText : Cell -> String
+cellText cell =
+    if (Date.day cell.date) == 1 then
+        toString (Date.month cell.date) ++ " " ++ (cellFormat cell)
+    else
+        cellFormat cell
 
 
 cellFormat : Cell -> String
 cellFormat cell =
     format dateConfig "%-d" cell.date
+
+
+firstDayOfMonth : Date -> Bool
+firstDayOfMonth date =
+    if (Date.day date) == 1 then
+        True
+    else
+        False
