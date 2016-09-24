@@ -11,7 +11,6 @@ import Html.Events exposing (onClick)
 import Html.Attributes exposing (class, classList)
 import Date exposing (..)
 import Date.Extra.Core exposing (..)
-import Date.Extra.Create exposing (dateFromFields)
 import Date.Extra.Utils exposing (dayList)
 import Date.Extra.Config
 import Date.Extra.Config.Configs exposing (getConfig)
@@ -28,20 +27,26 @@ type alias Year =
 
 type alias Cell =
     { date : Date
-    , events : Bool
+    , hasEvents : Bool
     }
 
 
-initCells : Year -> List Cell
-initCells year =
+initCells : List Date -> Year -> List Cell
+initCells eventDates year =
     List.map buildEmptyCells (allDaysOfTheYear year)
+        |> populateEvents eventDates
+
+
+populateEvents : List Date -> List Cell -> List Cell
+populateEvents eventDates calendarCells =
+    List.map (\cell -> { cell | hasEvents = List.member cell.date eventDates }) calendarCells
 
 
 {-|
 -}
 buildEmptyCells : Date -> Cell
 buildEmptyCells date =
-    { date = date, events = False }
+    { date = date, hasEvents = False }
 
 
 allDaysOfTheYear : Year -> List Date
@@ -51,7 +56,8 @@ allDaysOfTheYear year =
 
 firstDayOfTheYear : Year -> Date
 firstDayOfTheYear year =
-    dateFromFields year Jan 1 0 0 0 0
+    Date.fromString ((toString year) ++ "-01-01T00:00:00.000Z")
+        |> Result.withDefault (Date.fromTime 0)
 
 
 dateConfig : Date.Extra.Config.Config
@@ -79,10 +85,14 @@ update msg =
 --- VIEW
 
 
-view : Html Msg
-view =
-    div []
-        (calendarCells (initCells 2016))
+view : List Date -> Html Msg
+view eventDates =
+    let
+        cells =
+            initCells eventDates 2016
+    in
+        div []
+            (calendarCells cells)
 
 
 calendarCells : List Cell -> List (Html Msg)
@@ -93,7 +103,11 @@ calendarCells cells =
 calendarCell : Cell -> Html Msg
 calendarCell cell =
     div
-        [ classList [ ( "fyc-cell", True ), ( "fyc-cell-first-day", (firstDayOfMonth cell.date) ) ]
+        [ classList
+            [ ( "fyc-cell", True )
+            , ( "fyc-cell-first-day", (firstDayOfMonth cell.date) )
+            , ( "fyc-cell-with-events", (cell.hasEvents == True) )
+            ]
         , onClick (SelectDate cell.date)
         ]
         [ text (cellText cell) ]
